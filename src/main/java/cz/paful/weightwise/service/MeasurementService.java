@@ -6,6 +6,7 @@ import cz.paful.weightwise.data.jpa.MeasurementRepository;
 import cz.paful.weightwise.data.jpa.UserWeight;
 import cz.paful.weightwise.data.jpa.UserWeightRepository;
 import cz.paful.weightwise.util.JwtTokenUtil;
+import jakarta.transaction.Transactional;
 import org.knowm.xchart.BitmapEncoder;
 import org.knowm.xchart.XYChart;
 import org.knowm.xchart.XYSeries;
@@ -44,6 +45,7 @@ public class MeasurementService {
         this.measurementRepository = measurementRepository;
     }
 
+    @Transactional
     public void newData(InputStream inputStream, String username) {
         UserWeight userWeight = userWeightRepository.findUserWeightByUsername(username);
         if (userWeight == null) {

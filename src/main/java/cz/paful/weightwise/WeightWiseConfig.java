@@ -3,12 +3,10 @@ package cz.paful.weightwise;
 import cz.paful.weightwise.filters.JwtRequestFilter;
 import cz.paful.weightwise.service.UserService;
 import cz.paful.weightwise.util.JwtTokenUtil;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -31,7 +29,7 @@ public class WeightWiseConfig  {
     public SecurityFilterChain filterChain(HttpSecurity http, JwtRequestFilter jwtRequestFilter) throws Exception {
         return http.csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authz -> authz
-                        .requestMatchers("user/**")
+                        .requestMatchers("user/**", "health-check")
                         .permitAll()
                         .anyRequest()
                         .authenticated()

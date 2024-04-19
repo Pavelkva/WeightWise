@@ -43,7 +43,8 @@ public class WeightWiseConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**") // Povoluje CORS pro všechny cesty
-                .allowedOrigins("http://localhost:63342") // Povoluje pouze konkrétní doménu
+                .allowedOrigins("http://localhost:63342")
+                .allowedOrigins("https://pavelweb.onrender.com")// Povoluje pouze konkrétní doménu
                 .allowedMethods("*") // Povoluje specifické HTTP metody
                 .allowedHeaders("*") // Povoluje specifické hlavičky
                 .allowCredentials(true) // Povoluje odesílání cookies

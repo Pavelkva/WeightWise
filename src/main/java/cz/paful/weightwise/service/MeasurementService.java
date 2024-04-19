@@ -66,7 +66,7 @@ public class MeasurementService {
         measurementRepository.saveAll(measurements);
     }
 
-    public byte[] getMuscleMassChart(String username, int averagePerDays) throws IOException {
+    public byte[] getMuscleKgChart(String username, int averagePerDays) throws IOException {
         List<Measurement> measurements = measurementRepository.findMeasurementsForUsername(username);
         List<MeasurementDTO> measurementsDTO = new ArrayList<>();
         for (Measurement measurement : measurements) {
@@ -85,6 +85,68 @@ public class MeasurementService {
             yData.add(measurement.getMuscleMassKG());
         }
 
+        return getChart(xData, yData, "Muscle", "Date", "Muscle", "y(x)");
+    }
+
+    public byte[] getWeightKgChart(String username, int averagePerDays) throws IOException {
+        List<MeasurementDTO> measurementsDTO = getMeasurementsFirstForEachDay(username, averagePerDays);
+
+        List<LocalDate> xData = new ArrayList<>();
+        List<Float> yData = new ArrayList<>();
+
+        // Fill x and y data for chart
+        for (MeasurementDTO measurement : measurementsDTO) {
+            xData.add(measurement.getDate());
+            yData.add(measurement.getWeightKg());
+        }
+
+        return getChart(xData, yData, "Weight", "Date", "Weight", "y(x)");
+    }
+
+    public byte[] getWaterKgChart(String username, int averagePerDays) throws IOException {
+        List<MeasurementDTO> measurementsDTO = getMeasurementsFirstForEachDay(username, averagePerDays);
+
+        List<LocalDate> xData = new ArrayList<>();
+        List<Float> yData = new ArrayList<>();
+
+        // Fill x and y data for chart
+        for (MeasurementDTO measurement : measurementsDTO) {
+            xData.add(measurement.getDate());
+            yData.add(measurement.getWaterKG());
+        }
+
+        return getChart(xData, yData, "Water", "Date", "Water", "y(x)");
+    }
+
+    public byte[] getFatKgChart(String username, int averagePerDays) throws IOException {
+        List<MeasurementDTO> measurementsDTO = getMeasurementsFirstForEachDay(username, averagePerDays);
+
+        List<LocalDate> xData = new ArrayList<>();
+        List<Float> yData = new ArrayList<>();
+
+        // Fill x and y data for chart
+        for (MeasurementDTO measurement : measurementsDTO) {
+            xData.add(measurement.getDate());
+            yData.add(measurement.getBodyFatKG());
+        }
+
+        return getChart(xData, yData, "Fat", "Date", "Fat", "y(x)");
+    }
+
+    private List<MeasurementDTO> getMeasurementsFirstForEachDay(String username, int averagePerDays) {
+        List<Measurement> measurements = measurementRepository.findMeasurementsForUsername(username);
+        List<MeasurementDTO> measurementsDTO = new ArrayList<>();
+        for (Measurement measurement : measurements) {
+            measurementsDTO.add(new MeasurementDTO(measurement));
+        }
+
+        measurementsDTO = removeOldestMeasurementsFromSameDay(measurementsDTO);
+        measurementsDTO = getAverageMeasurementPerDays(measurementsDTO, averagePerDays);
+
+        return measurementsDTO;
+    }
+
+    private byte[] getChart(List<LocalDate> xData, List<Float> yData, String Title, String xTitle, String yTitle, String seriesName) throws IOException {
         // x data needs to be date type
         List<Date> xDataDate = new ArrayList<>();
         for (LocalDate localDate : xData) {
@@ -93,17 +155,17 @@ public class MeasurementService {
 
         // Create Chart
         XYChart chart = new XYChart(500, 400);
-        chart.setTitle("Sample Chart");
-        chart.setXAxisTitle("Time");
-        chart.setXAxisTitle("Muscle");
-        XYSeries series = chart.addSeries("y(x)", xDataDate, yData);
+        chart.setTitle(Title);
+        chart.setXAxisTitle(xTitle);
+        chart.setYAxisTitle(yTitle);
+        XYSeries series = chart.addSeries(seriesName, xDataDate, yData);
         series.setMarker(SeriesMarkers.CIRCLE);
         series.setFillColor(Color.RED);
 
         return BitmapEncoder.getBitmapBytes(chart, BitmapEncoder.BitmapFormat.PNG);
     }
 
-    private List<MeasurementDTO> getAverageMeasurementPerDays(List<MeasurementDTO> measurements, int days) {
+    public List<MeasurementDTO> getAverageMeasurementPerDays(List<MeasurementDTO> measurements, int days) {
         if (days == 1) {
             return measurements;
         }

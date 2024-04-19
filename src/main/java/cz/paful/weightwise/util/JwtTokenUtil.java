@@ -1,13 +1,10 @@
 package cz.paful.weightwise.util;
 
-import cz.paful.weightwise.controller.dto.UserRegistrationDTO;
-import io.jsonwebtoken.JwtParser;
+import cz.paful.weightwise.controller.dto.TokenResponseDTO;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
@@ -24,17 +21,19 @@ public class JwtTokenUtil {
     private long jwtExpirationDate;
 
     // generate JWT token
-    public String generateToken(String username){
+    public TokenResponseDTO generateToken(String username){
         Date currentDate = new Date();
 
         Date expireDate = new Date(currentDate.getTime() + jwtExpirationDate);
 
-        return Jwts.builder()
+        String token = Jwts.builder()
                 .subject(username)
                 .issuedAt(new Date())
                 .expiration(expireDate)
                 .signWith(key())
                 .compact();
+
+        return new TokenResponseDTO(token, expireDate);
     }
 
     private Key key(){

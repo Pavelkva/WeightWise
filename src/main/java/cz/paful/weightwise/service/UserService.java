@@ -1,5 +1,6 @@
 package cz.paful.weightwise.service;
 
+import cz.paful.weightwise.controller.dto.TokenResponseDTO;
 import cz.paful.weightwise.controller.dto.UserRegistrationDTO;
 import cz.paful.weightwise.data.dto.UserWeightDTO;
 import cz.paful.weightwise.data.jpa.UserWeight;
@@ -9,13 +10,11 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.time.temporal.ChronoField;
 import java.util.Date;
 
 
@@ -46,19 +45,21 @@ public class UserService implements UserDetailsService {
         userWeightRepository.save(userWeight);
     }
 
-    public String login(UserRegistrationDTO userRegistrationDTO) {
+    public TokenResponseDTO login(UserRegistrationDTO userRegistrationDTO) {
         UserWeight userWeight = userWeightRepository.findUserWeightByUsername(userRegistrationDTO.getUsername());
 
         if (userWeight == null || !passwordEncoder.matches(userRegistrationDTO.getPassword(), userWeight.getPassword())) {
             throw new BadCredentialsException("Wrong username or password");
         }
 
+        TokenResponseDTO tokenResponseDTO = jwtTokenUtil.generateToken(userRegistrationDTO.getUsername());
+
         // Right password we can generate token
         userWeight.setLastLogin(new Date().toInstant());
-        userWeight.setToken(jwtTokenUtil.generateToken(userRegistrationDTO.getUsername()));
+        userWeight.setToken(tokenResponseDTO.getToken());
         userWeightRepository.save(userWeight);
 
-        return userWeight.getToken();
+        return tokenResponseDTO;
     }
 
     public String getUserNameByAuthorizationHeader(HttpServletRequest request) {

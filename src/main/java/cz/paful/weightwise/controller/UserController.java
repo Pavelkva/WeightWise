@@ -1,5 +1,6 @@
 package cz.paful.weightwise.controller;
 
+import cz.paful.weightwise.controller.dto.TokenResponseDTO;
 import cz.paful.weightwise.controller.dto.UserRegistrationDTO;
 import cz.paful.weightwise.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +32,7 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody UserRegistrationDTO userRegistrationDTO) {
+    public ResponseEntity<TokenResponseDTO> login(@RequestBody UserRegistrationDTO userRegistrationDTO) {
         try {
             return ResponseEntity
                     .ok()

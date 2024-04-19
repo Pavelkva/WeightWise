@@ -11,9 +11,11 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
-public class WeightWiseConfig  {
+public class WeightWiseConfig implements WebMvcConfigurer {
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -37,4 +39,15 @@ public class WeightWiseConfig  {
                 .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
+
+    @Override
+    public void addCorsMappings(CorsRegistry registry) {
+        registry.addMapping("/**") // Povoluje CORS pro všechny cesty
+                .allowedOrigins("http://localhost:63342") // Povoluje pouze konkrétní doménu
+                .allowedMethods("*") // Povoluje specifické HTTP metody
+                .allowedHeaders("*") // Povoluje specifické hlavičky
+                .allowCredentials(true) // Povoluje odesílání cookies
+                .maxAge(3600); // Maximální doba platnosti preflight requestu
+    }
+
 }

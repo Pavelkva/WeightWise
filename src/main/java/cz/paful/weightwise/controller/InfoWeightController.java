@@ -45,10 +45,31 @@ public class InfoWeightController {
                 .build();
     }
 
-    @GetMapping("/muscle-chart")
-    public ResponseEntity<byte[]> getMuscleChart(HttpServletRequest request, @RequestParam(name = "averageDays") int averageDays) throws IOException {
-        return ResponseEntity
-                .status(HttpStatus.CREATED)
-                .body(measurementService.getMuscleMassChart(userService.getUserNameByAuthorizationHeader(request),averageDays));
+    @GetMapping("/muscle-kg-chart.png")
+    public ResponseEntity<byte[]> getMuscleKgChart(HttpServletRequest request, @RequestParam(name = "averageDays") int averageDays) throws IOException {
+        return ResponseEntity.status(HttpStatus.OK)
+                .contentType(MediaType.valueOf(MediaType.IMAGE_PNG_VALUE))
+                .body(measurementService.getMuscleKgChart(userService.getUserNameByAuthorizationHeader(request),averageDays));
+    }
+
+    @GetMapping("/weight-chart.png")
+    public ResponseEntity<byte[]> getWeightChart(HttpServletRequest request, @RequestParam(name = "averageDays") int averageDays) throws IOException {
+        return ResponseEntity.status(HttpStatus.OK)
+                .contentType(MediaType.valueOf(MediaType.IMAGE_PNG_VALUE))
+                .body(measurementService.getWeightKgChart(userService.getUserNameByAuthorizationHeader(request),averageDays));
+    }
+
+    @GetMapping("/water-kg-chart.png")
+    public ResponseEntity<byte[]> getWaterKgValue(HttpServletRequest request, @RequestParam(name = "averageDays") int averageDays) throws IOException {
+        return ResponseEntity.status(HttpStatus.OK)
+                .contentType(MediaType.valueOf(MediaType.IMAGE_PNG_VALUE))
+                .body(measurementService.getWaterKgChart(userService.getUserNameByAuthorizationHeader(request),averageDays));
+    }
+
+    @GetMapping("/fat-kg-chart.png")
+    public ResponseEntity<byte[]> getFatKgChart(HttpServletRequest request, @RequestParam(name = "averageDays") int averageDays) throws IOException {
+        return ResponseEntity.status(HttpStatus.OK)
+                .contentType(MediaType.valueOf(MediaType.IMAGE_PNG_VALUE))
+                .body(measurementService.getFatKgChart(userService.getUserNameByAuthorizationHeader(request),averageDays));
     }
 }

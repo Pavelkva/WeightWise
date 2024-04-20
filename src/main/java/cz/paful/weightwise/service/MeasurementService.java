@@ -1,5 +1,6 @@
 package cz.paful.weightwise.service;
 
+import cz.paful.weightwise.WeightWiseConfig;
 import cz.paful.weightwise.data.dto.MeasurementDTO;
 import cz.paful.weightwise.data.jpa.Measurement;
 import cz.paful.weightwise.data.jpa.MeasurementRepository;
@@ -14,6 +15,7 @@ import org.knowm.xchart.style.markers.SeriesMarkers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
 
 import java.awt.*;
@@ -46,6 +48,7 @@ public class MeasurementService {
     }
 
     @Transactional
+    @CacheEvict(value = WeightWiseConfig.USER_WEIGHT_CACHE_KEY, key = "#username")
     public void newData(InputStream inputStream, String username) {
         UserWeight userWeight = userWeightRepository.findUserWeightByUsername(username);
         if (userWeight == null) {
@@ -64,6 +67,7 @@ public class MeasurementService {
         }
 
         measurementRepository.saveAll(measurements);
+        userWeight.setLastImport(new Date().toInstant());
     }
 
     public byte[] getMuscleKgChart(String username, int averagePerDays) throws IOException {

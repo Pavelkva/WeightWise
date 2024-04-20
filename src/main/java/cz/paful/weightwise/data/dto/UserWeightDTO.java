@@ -18,6 +18,7 @@ public class UserWeightDTO implements UserDetails {
         setToken(userWeight.getToken());
         setUsername(userWeight.getUsername());
         setLastLogin(userWeight.getLastLogin());
+        setLastImport(userWeight.getLastImport());
     }
 
     private Long id;
@@ -25,6 +26,7 @@ public class UserWeightDTO implements UserDetails {
     private String password;
     private String token;
     private Instant lastLogin;
+    private Instant lastImport;
 
     public Long getId() {
         return id;
@@ -91,5 +93,13 @@ public class UserWeightDTO implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+    public Instant getLastImport() {
+        return lastImport;
+    }
+
+    public void setLastImport(Instant lastImport) {
+        this.lastImport = lastImport;
     }
 }

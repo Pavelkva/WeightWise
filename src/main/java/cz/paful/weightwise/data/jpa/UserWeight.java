@@ -16,6 +16,8 @@ public class UserWeight {
     private String password;
     private String token;
     private Instant lastLogin;
+    private Instant lastImport;
+
     @OneToMany(mappedBy = "userWeight")
     private List<Measurement> measurementList;
 
@@ -58,5 +60,13 @@ public class UserWeight {
 
     public void setLastLogin(Instant lastLogin) {
         this.lastLogin = lastLogin;
+    }
+
+    public Instant getLastImport() {
+        return lastImport;
+    }
+
+    public void setLastImport(Instant lastImport) {
+        this.lastImport = lastImport;
     }
 }

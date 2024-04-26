@@ -1,6 +1,7 @@
 package cz.paful.weightwise.service;
 
 import cz.paful.weightwise.WeightWiseConfig;
+import cz.paful.weightwise.controller.dto.CommentResponseDTO;
 import cz.paful.weightwise.data.dto.MeasurementDTO;
 import cz.paful.weightwise.data.jpa.Measurement;
 import cz.paful.weightwise.data.jpa.MeasurementRepository;
@@ -135,6 +136,25 @@ public class MeasurementService {
         }
 
         return getChart(xData, yData, "Fat", "Date", "Fat", "y(x)");
+    }
+
+    public List<CommentResponseDTO> getComments(String username) {
+        List<Measurement> measurements = measurementRepository.findMeasurementsForUsername(username);
+
+        List<CommentResponseDTO> comments = new ArrayList<>();
+        for (Measurement measurement : measurements) {
+            if (measurement.getComment() == null || measurement.getComment().isEmpty()) {
+                continue;
+            }
+
+            CommentResponseDTO commentResponseDTO = new CommentResponseDTO();
+            commentResponseDTO.setTime(measurement.getTime());
+            commentResponseDTO.setDate(measurement.getDate());
+            commentResponseDTO.setComment(measurement.getComment());
+            comments.add(commentResponseDTO);
+        }
+
+        return comments;
     }
 
     private List<MeasurementDTO> getMeasurementsFirstForEachDay(String username, int averagePerDays) {

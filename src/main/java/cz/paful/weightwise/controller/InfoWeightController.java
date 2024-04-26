@@ -1,5 +1,6 @@
 package cz.paful.weightwise.controller;
 
+import cz.paful.weightwise.controller.dto.CommentResponseDTO;
 import cz.paful.weightwise.data.dto.UserWeightDTO;
 import cz.paful.weightwise.service.MeasurementService;
 import cz.paful.weightwise.service.UserService;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Objects;
 
 @RestController
@@ -122,6 +124,14 @@ public class InfoWeightController {
                 .eTag(userWeightDTO.getLastImport().toString())
                 .contentType(MediaType.valueOf(MediaType.IMAGE_PNG_VALUE))
                 .body(measurementService.getFatKgChart(userWeightDTO.getUsername(), averageDays));
+    }
+
+    @GetMapping("/comments")
+    public ResponseEntity<List<CommentResponseDTO>> getComments(HttpServletRequest request) {
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(measurementService.getComments(userService.loadUserByAuthorizationHeader(request).getUsername()));
     }
 
     private boolean requestETagEqualsActualETag(HttpServletRequest request, UserWeightDTO userWeightDTO) {
